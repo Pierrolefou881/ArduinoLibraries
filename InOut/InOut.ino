@@ -25,7 +25,13 @@
 #include "InOutBase.hpp"
 #include "OutputBase.hpp"
 #include "DigitalOutput.hpp"
+#include "InputBase.hpp"
+#include "DigitalInput.hpp"
 
+// #define _TEST_DIGITAL_OUTPUT
+#define _TEST_DIGITAL_INPUT
+
+#ifdef _TEST_DIGITAL_OUTPUT
 InOut::Digital::DigitalOutput led{ 2 };
 InOut::Digital::DigitalOutput green{ 7 };
 InOut::Digital::DigitalOutput yellow{ LED_BUILTIN };
@@ -53,3 +59,21 @@ void loop() {
   yellow.toggle();
   delay(500);
 }
+#endif
+
+#ifdef _TEST_DIGITAL_INPUT
+InOut::Digital::DigitalInput btn{ 12 };
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(2, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  digitalWrite(2, btn.read_value());
+  auto message = btn.is_active() ? "HIGH" : "LOW";
+  Serial.println(message);
+}
+#endif
