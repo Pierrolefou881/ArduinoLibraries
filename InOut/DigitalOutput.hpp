@@ -42,6 +42,9 @@ namespace InOut
             virtual ~DigitalOutput(void) = default;
 
             void write_value(int16_t value) override;
+            void turn_on(void);
+            void turn_off(void);
+            void toggle(void);
         };
     }
 }

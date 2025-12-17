@@ -27,6 +27,8 @@
 #include "DigitalOutput.hpp"
 
 InOut::Digital::DigitalOutput led{ 2 };
+InOut::Digital::DigitalOutput green{ 7 };
+InOut::Digital::DigitalOutput yellow{ LED_BUILTIN };
 uint16_t state{ };
 
 void setup() {
@@ -38,5 +40,16 @@ void loop() {
   // put your main code here, to run repeatedly:
   state ^= HIGH;
   led.write_value(state);
+
+  if (green.get_current_state() > LOW)
+  {
+    green.turn_off();
+  }
+  else 
+  {
+    green.turn_on();
+  }
+
+  yellow.toggle();
   delay(500);
 }
