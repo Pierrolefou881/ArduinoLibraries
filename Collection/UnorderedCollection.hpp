@@ -30,6 +30,7 @@ namespace Collection
     /**
      * Defines the interface for all unordered collections. Unordered
      * collections have the capacity of adding an item at their end.
+     * @param T can be any type.
      */
     template<typename T>
     class UnorderedCollection : public BaseCollection<T>

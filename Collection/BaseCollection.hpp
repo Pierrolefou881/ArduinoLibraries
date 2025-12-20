@@ -32,6 +32,7 @@ namespace Collection
      * avaibility to add, remove, check and clear items. It can
      * also provide informations on its size. Collections have indices, i.e.
      * they have a position system.
+     * @param T can be any type.
      */
     template<typename T>
     class BaseCollection
@@ -72,22 +73,23 @@ namespace Collection
          * @param index must be wihtin bounds.
          * @return the reference to the item at the given position.
          */
-        virtual T& at(uint16_t index) = 0;
+        virtual T& at(uint16_t index) const = 0;
 
         /**
          * Checks the presence of a given item within this BaseCollection.
          * @param item to check.
+         * @param out_index of the first instance encountered, if any. OutParameter.
          * @return true if item is present within this BaseCollection,
          *         false otherwise.
          */
-        virtual bool contains(const T& item) = 0;
+        virtual bool contains(const T& item, uint16_t& out_index = 0) const = 0;
 
         /**
          * @return the number of elements contained in this BaseCollection
          */
         virtual uint16_t size(void) const = 0;
 
-        T& operator [](uint16_t index) { return at(index); }
+        T& operator [](uint16_t index) const { return at(index); }
         BaseCollection<T>& operator +=(const T& item) 
         { 
             add(item);

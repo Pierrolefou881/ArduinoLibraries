@@ -32,6 +32,7 @@ namespace Collection
      * Interface declaration for all unordered list types (ArrayList,
      * LinkedList,...). This is the weakest callable type for polymorphic
      * applications.
+     * @param T can be any type.
      */
     template<typename T>
     class UnorderedList : public UnorderedCollection<T>, public BaseList<T>

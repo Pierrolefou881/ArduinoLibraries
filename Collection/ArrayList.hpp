@@ -24,18 +24,22 @@
  */
 #pragma once
 #include "UnorderedList.hpp"
-#include "UnorderedArrayContainer.hpp"
+#include "ArrayContainer.hpp"
+#include <U_ptr.hpp>
 
 namespace Collection
 {
     /**
      * Simple generic, unordered collection. Duplicate elements
      * are allowed. Memory allocation is based on arrays.
+     * @param T can be any type.
      */
     template <typename T>
-    class ArrayList : public UnorderedList<T>, private UnorderedArrayContainer<T>
+    class ArrayList : public UnorderedList<T>
     {
     public:
+        virtual ~ArrayList(void) = default;
+
         /**
          * Tries to add the provided item to this ArrayList and
          * at the specified index (at the beginning if no index is provided).
@@ -45,7 +49,22 @@ namespace Collection
          */
         bool add(const T& item, uint16_t index = 0) override
         {
-            return false;
+            if (index >= size())
+            {
+                return false;
+            }
+
+            return _container->add(item, index);
+        }
+
+        /**
+         * Adds the provided item at the end of this
+         * ArrayList.
+         * @param item to add.
+         */
+        void append(const T& item) override
+        {
+            _container->add(item, size());
         }
 
         /**
@@ -54,7 +73,7 @@ namespace Collection
          */
         void remove(const T& item) override
         {
-
+            _container->remove(item);
         }
 
         /**
@@ -63,7 +82,7 @@ namespace Collection
          */
         void remove_at(uint16_t index) override
         {
-
+            _container->remove_at(index);
         }
 
         /**
@@ -72,7 +91,7 @@ namespace Collection
          */
         void remove_all(const T& item) override
         {
-
+            _container->remove_all(item);
         }
 
         /**
@@ -80,7 +99,7 @@ namespace Collection
          */
         void clear(void) override
         {
-
+            _container->clear();
         }
 
         /**
@@ -90,20 +109,21 @@ namespace Collection
          * @param index must be wihtin bounds.
          * @return the reference to the item at the given position.
          */
-        T& at(uint16_t index) override
+        T& at(uint16_t index) const override
         {
-            return data()[0];
+            return _container->data_at(index);
         }
 
         /**
          * Checks the presence of a given item within this ArrayList.
          * @param item to check.
+         * @param out_index of the first encountered occurrence, if any.
          * @return true if item is present within this ArrayList,
          *         false otherwise.
          */
-        bool contains(const T& item) override
+        bool contains(const T& item, uint16_t& out_index = 0) const override
         {
-            return false;
+            return _container->contains(item, out_index);
         }
 
         /**
@@ -111,8 +131,13 @@ namespace Collection
          */
         uint16_t size(void) const override
         {
-            return 0;
+            return _container->get_size();
         }
+
     private:
+        Memory::U_ptr<ArrayContainer<T>> _container
+        { 
+            Memory::make_unique<ArrayContainer<T>>()  
+        };
     };
 }

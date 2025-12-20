@@ -29,6 +29,7 @@ namespace Collection
     /**
      * Defines behavior for all lists. Lists have the ability to
      * contain several instances of the same item.
+     * @param T can be any type.
      */
     template<typename T>
     class BaseList

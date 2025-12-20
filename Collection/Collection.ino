@@ -22,17 +22,55 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "BaseCollection.hpp"
 #include "ArrayList.hpp"
 
-Collection::ArrayList<char> arraylist{ };
+Collection::UnorderedList<char>* charList{ };
+int level{ };
 
 void setup() {
   // put your setup code here, to run once:
-
+  charList = new Collection::ArrayList<char>{ };
+  pinMode(LED_BUILTIN, OUTPUT);
+  level = LOW;
+  Serial.begin(9600);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
 
+  uint16_t index{ };
+  // put your main code here, to run repeatedly:
+  if (charList->size() < 5)
+  {
+    charList->append('a');
+  }
+  else if (charList->size() < 10)
+  {
+    charList->add('B', 4);
+  }
+  else if (charList->size() < 15)
+  {
+    charList->add('c');
+  }
+  else if (charList->contains('B', index))
+  {
+    // charList->remove_at(index);
+    // charList->remove('B');
+    // charList->remove_all('a');
+    charList->clear();
+  }
+
+  level ^= HIGH;
+  digitalWrite(LED_BUILTIN, level);
+  print_list(*charList);
+  delay(2000);
+}
+
+void print_list(const Collection::UnorderedList<char>& list)
+{
+  for (uint16_t index = 0; index < list.size(); index++)
+  {
+    Serial.print(list.at(index));
+    Serial.print('\t');
+  }
+  Serial.println(list.size());
 }
