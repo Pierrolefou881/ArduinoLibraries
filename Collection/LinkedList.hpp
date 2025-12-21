@@ -29,6 +29,55 @@
 
 namespace Collection
 {
+    template<typename T>
+    class LinkedList;
+    /**
+     * Iterates over LinkedLists without exposing inner algorithms.
+     * @param T type conained witin the LinkedList.
+     */
+    template<typename T>
+    class LinkedListIterator : public BaseIterator<T>
+    {
+    public:
+        /**
+         * Initializes this LinkedListIterator with the provided LinkedList
+         * to iterate over.
+         * @param list must not be nullptr.
+         */
+        LinkedListIterator(LinkedList<T>* list) : _list{ list }
+        {
+            // Empty body.
+        }
+
+        /**
+         * @return true if there is at least one element remaining to iterate
+         *         over, false otherwise.
+         */
+        bool has_next(void) const override
+        {
+            return _list->_next != nullptr;
+        }
+
+        /**
+         * @return the element currently iterated over.
+         */
+        T& get(void) const override
+        {
+            return *(_list->_next->_data);
+        }
+
+        /**
+         * Moves to the next element.
+         */
+        void next(void) override
+        {
+            _list = _list->_next.get();
+        }
+
+    private:
+        LinkedList<T>* _list{ };
+    };
+
     /**
      * Dynamic sized linked list of objects.
      * @param T can be any type as long as it has a default initializer.
@@ -176,6 +225,8 @@ namespace Collection
         { 
             return *_current_size;
         }
+
+        friend class LinkedListIterator<T>;
 
     private:
         Memory::S_ptr<T> _data{ };

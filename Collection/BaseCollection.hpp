@@ -28,6 +28,31 @@
 namespace Collection
 {
     /**
+     * Defines base iterator behavior.
+     * @param T type of items contained within the iterated over collection.
+     */
+    template<typename T>
+    class BaseIterator
+    {
+    public:
+        /**
+         * @return true if there is at least one element remaining to iterate
+         *         over, false otherwise.
+         */
+        virtual bool has_next(void) const = 0;
+
+        /**
+         * @return the element currently iterated over.
+         */
+        virtual T& get(void) const = 0;
+
+        /**
+         * Moves to the next element.
+         */
+        virtual void next(void) = 0;
+    };
+
+    /**
      * Defines interface for all collections. Collections have the
      * avaibility to add, remove, check and clear items. It can
      * also provide informations on its size. Collections have indices, i.e.

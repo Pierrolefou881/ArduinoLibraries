@@ -70,16 +70,29 @@ void loop() {
 
   level ^= HIGH;
   digitalWrite(LED_BUILTIN, level);
-  print_list(*charList);
+  print_list(charList);
   delay(2000);
 }
 
-void print_list(const Collection::UnorderedList<char>& list)
+void print_list(Collection::UnorderedList<char>* list)
 {
-  for (uint16_t index = 0; index < list.size(); index++)
+  #ifdef _ARRAY_LIST
+  for (uint16_t index = 0; index < list->size(); index++)
   {
-    Serial.print(list.at(index));
+    Serial.print(list->at(index));
     Serial.print('\t');
   }
-  Serial.println(list.size());
+  #endif
+
+  #ifdef _LINKED_LIST
+  auto linked = static_cast<Collection::LinkedList<char>*>(list);
+  Collection::LinkedListIterator<char> iterator{ linked };
+  while (iterator.has_next())
+  {
+    Serial.print(iterator.get());
+    Serial.print('\t');
+    iterator.next();
+  }
+  #endif
+  Serial.println(list->size());
 }
