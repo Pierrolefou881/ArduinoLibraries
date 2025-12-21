@@ -23,13 +23,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "ArrayList.hpp"
+#include "LinkedList.hpp"
+
+// #define _ARRAY_LIST
+#define _LINKED_LIST
 
 Collection::UnorderedList<char>* charList{ };
 int level{ };
 
 void setup() {
   // put your setup code here, to run once:
+  #ifdef _ARRAY_LIST
   charList = new Collection::ArrayList<char>{ };
+  #endif
+  #ifdef _LINKED_LIST
+  charList = new Collection::LinkedList<char>{ };
+  #endif
   pinMode(LED_BUILTIN, OUTPUT);
   level = LOW;
   Serial.begin(9600);

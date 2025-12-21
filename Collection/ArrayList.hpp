@@ -32,7 +32,8 @@ namespace Collection
     /**
      * Simple generic, unordered collection. Duplicate elements
      * are allowed. Memory allocation is based on arrays.
-     * @param T can be any type.
+     * @param T can be any type as long as it has a default intializer.
+     *          Usually smart pointers.
      */
     template <typename T>
     class ArrayList : public UnorderedList<T>
@@ -43,7 +44,7 @@ namespace Collection
         /**
          * Tries to add the provided item to this ArrayList and
          * at the specified index (at the beginning if no index is provided).
-         * @param item to add
+         * @param item to add.
          * @param index where to add the item. Must be within bounds. 0 by default.
          * @return true if adding was succesfull, false otherwise.
          */
@@ -117,7 +118,7 @@ namespace Collection
         /**
          * Checks the presence of a given item within this ArrayList.
          * @param item to check.
-         * @param out_index of the first encountered occurrence, if any.
+         * @param out_index of the first encountered occurrence, if any. Out parameter.
          * @return true if item is present within this ArrayList,
          *         false otherwise.
          */
@@ -127,7 +128,7 @@ namespace Collection
         }
 
         /**
-         * @return the number of elements contained in this ArrayList
+         * @return the number of elements contained in this ArrayList.
          */
         uint16_t size(void) const override
         {

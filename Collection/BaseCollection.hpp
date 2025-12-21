@@ -43,7 +43,7 @@ namespace Collection
         /**
          * Tries to add the provided item to this BaseCollection and
          * at the specified index (at the beginning if no index is provided).
-         * @param item to add
+         * @param item to add.
          * @param index where to add the item. Must be within bounds. 0 by default.
          * @return true if adding was succesfull, false otherwise.
          */
@@ -78,14 +78,14 @@ namespace Collection
         /**
          * Checks the presence of a given item within this BaseCollection.
          * @param item to check.
-         * @param out_index of the first instance encountered, if any. OutParameter.
+         * @param out_index of the first instance encountered, if any. Out parameter.
          * @return true if item is present within this BaseCollection,
          *         false otherwise.
          */
         virtual bool contains(const T& item, uint16_t& out_index = 0) const = 0;
 
         /**
-         * @return the number of elements contained in this BaseCollection
+         * @return the number of elements contained in this BaseCollection.
          */
         virtual uint16_t size(void) const = 0;
 
