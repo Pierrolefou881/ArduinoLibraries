@@ -40,11 +40,45 @@ namespace Event
     {
     public:
         /**
+         * Initializes this Callable with the provided type.
+         * @param type of the concrete class, for equality checks.
+         */
+        Callable(char type) : _type{ type }
+        {
+            // Empty body.
+        }
+        
+        virtual ~Callable(void) = default;
+        
+        /**
          * Calls the registered method or function or collection
          * thereof.
          * @param sender instigator of the call.
          * @param args context of the call.
          */
-        virtual void call(TS* sender, TA args) = 0;
+        virtual void call(TS* sender, TA args) const = 0;
+
+        /**
+         * Checks whether this Callable is equal the provided one.
+         * @param other to test equality with.
+         * @return true if this and other are equal, false otherwise.
+         */
+        virtual bool equals(const Callable<TS, TA>& other) const
+        {
+            return _type == other._type;
+        }
+
+        friend bool operator ==(const Callable<TS, TA>& a, const Callable<TS, TA>& b)
+        {
+            return a.equals(b);
+        }
+
+        friend bool operator !=(const Callable<TS, TA>& a, const Callable<TS, TA>& b)
+        {
+            return !a.equals(b);
+        }
+
+    private:
+        const char _type{ };
     };
 }

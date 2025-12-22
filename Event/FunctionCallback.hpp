@@ -1,7 +1,7 @@
 /*
  * ----------------------------------------------------------------------------
- * Event
- * Testbed for callbacks and event handlers.
+ * FunctionCallback
+ * Callback for non instance function.
  * Part of the ArduinoLibraries project, to be used with any Arduino board.
  * <https://github.com/Pierrolefou881/ArduinoLibraries>
  * ----------------------------------------------------------------------------
@@ -22,46 +22,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "EventHandler.hpp"
+#pragma once
+#include "Callable.hpp"
 
-struct TestButton
+namespace Event
 {
-  int pin_number{ };
-  int current_state{ };
-  Event::EventHandler<const TestButton, int> StateChanged{ };
-
-  TestButton(int a_pin_number) : pin_number{ a_pin_number } 
-  {
-    pinMode(a_pin_number, INPUT);
-  }
-
-  void read()
-  {
-    auto new_state = digitalRead(pin_number);
-    if (new_state != current_state)
+    template<typename TS, typename TA>
+    class FunctionCallback : public Callable<TS, TA>
     {
-      current_state = new_state;
-      StateChanged.call(this, new_state);
-    }
-  }
-};
-
-TestButton btn{ 12 };
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-}
-
-void loop() {
-  // put your main code here, to run repeatedly:
-
-}
-
-void on_button_pressed(const TestButton* sender, int args)
-{
-  if (sender == nullptr || args < 0)
-  {
-    return;
-  }
-  Serial.println("PRESSED");
+    public:
+    private:
+        void (*func)(TS*, TA);
+    };
 }

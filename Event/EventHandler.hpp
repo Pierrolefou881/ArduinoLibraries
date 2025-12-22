@@ -30,19 +30,68 @@
 
 namespace Event
 {
+    /**
+     * Manages a group of Callabe implementations and triggers their
+     * callback functions or methods when called. Offers the possibilty to
+     * subscribe or unsubscribe to the event.
+     */
     template<typename TS, typename TA>
     class EventHandler : public Callable<TS, TA>
     {
     public:
-        void call(TS* sender, TA args) override
+        /**
+         * Initializes this EventHandler with default values.
+         */
+        EventHandler(void) : Callable<TS, TA>{ TYPE }
         {
+            // Empty body.
+        }
+        virtual ~EventHandler(void) = default;
 
+        void register_callback(void (*func)(TS*, TA))
+        {
+            
+        }
+
+        /**
+         * Calls all registered callbacks and event handlers.
+         * @param sender instigator of the call, usually this EventHandler's owner.
+         * @param args context of the call, the reason to change.
+         */
+        void call(TS* sender, TA args) const override
+        {
+            auto linked = static_cast<Collection::LinkedList<Memory::S_ptr<Callable<TS, TA>>>*>(_callbacks.get());
+            Collection::LinkedListIterator<Memory::S_ptr<Callable<TS, TA>>> iterator(linked);
+            while (iterator.has_next()) 
+            {
+                iterator.get()->call(sender, args);
+                iterator.next();
+            }
+        }
+
+        /**
+         * Checks whether this EventHandler is equal the provided one.
+         * @param other to test equality with.
+         * @return true if this and other are equal, false otherwise.
+         */
+        bool equals(const Callable<TS, TA>& other) const override
+        {
+            // Check type before performing a cast.
+            if (!Callable<TS, TA>::equals(other))
+            {
+                return false;
+            }
+
+            auto eh = static_cast<const EventHandler<TS, TA>&>(other);
+            return _callbacks == eh._callbacks;
         }
 
     private:
-        Memory::U_ptr<Collection::UnorderedList<Memory::S_ptr<Callable<TS, TA>>>> _callbacks
+        static const char TYPE{ 'E' };
+
+        Memory::U_ptr<Collection::LinkedList<Memory::S_ptr<Callable<TS, TA>>>> _callbacks
         {
-            new Collection::LinkedList<Memory::S_ptr<Callable<TS, TA>>>{ }
+            Memory::make_unique<Collection::LinkedList<Memory::S_ptr<Callable<TS, TA>>>>()
         };
     };
 }
