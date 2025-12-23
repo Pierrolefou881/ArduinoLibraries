@@ -28,6 +28,7 @@
 #include <U_ptr.hpp>
 #include <S_ptr.hpp>
 #include "FunctionCallback.hpp"
+#include "MethodCallback.hpp"
 
 namespace Event
 {
@@ -35,6 +36,9 @@ namespace Event
      * Manages a group of Callabe implementations and triggers their
      * callback functions or methods when called. Offers the possibilty to
      * subscribe or unsubscribe to the event.
+     * @param TS type of sender.
+     * @param TA type of args. Informations on the calling context and the
+     *           reason for change.
      */
     template<typename TS, typename TA>
     class EventHandler : public Callable<TS, TA>
@@ -47,16 +51,34 @@ namespace Event
         {
             // Empty body.
         }
+
         virtual ~EventHandler(void) = default;
 
-        void register_callback(void (*func)(TS*, TA))
+        /**
+         * Subscribes a function to this EventHandler.
+         * @param function to be called on triggering.
+         */
+        void register_callback(void (*function)(TS*, TA))
         {
-            Memory::S_ptr<Callable<TS, TA>> callback{ new FunctionCallback<TS, TA>{ func } };
+            Memory::S_ptr<Callable<TS, TA>> callback{ new FunctionCallback<TS, TA>{ function } };
             _callbacks->append(callback);
         }
 
         /**
-         * Calls all registered callbacks and event handlers.
+         * Subscribes an instance method to this EventHandler.
+         * @param TI type of instance.
+         * @param instance to be called. Must not be nullptr.
+         * @param method of instance to be called.
+         */
+        template<typename TI>
+        void register_callback(TI* instance, void (TI::*method)(TS*, TA))
+        {
+            Memory::S_ptr<Callable<TS, TA>> callback{ new MethodCallback<TS, TA, TI>{ instance, method } };
+            _callbacks->append(callback);
+        }
+
+        /**
+         * Calls all registered callbacks.
          * @param sender instigator of the call, usually this EventHandler's owner.
          * @param args context of the call, the reason to change.
          */

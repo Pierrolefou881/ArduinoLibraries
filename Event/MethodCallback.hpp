@@ -1,7 +1,7 @@
 /*
  * ----------------------------------------------------------------------------
- * FunctionCallback
- * Callback for non instance function.
+ * MethodCallback
+ * Callback for instance method called on an object.
  * Part of the ArduinoLibraries project, to be used with any Arduino board.
  * <https://github.com/Pierrolefou881/ArduinoLibraries>
  * ----------------------------------------------------------------------------
@@ -28,42 +28,44 @@
 namespace Event
 {
     /**
-     * Callback for non-instance function. Basically,
-     * FunctionCallback is just a wrapper for a pointer to
-     * function with a signature matching the event.
+     * Callback for instance methods. Holds a reference
+     * to the instance and the method to call.
      * @param TS type of sender.
-     * @param TA type of args. Gives context and reason to change.
+     * @param TA type of args, context and reason of the call.
+     * @param TI type of instance of which method is called.
      */
-    template<typename TS, typename TA>
-    class FunctionCallback : public Callable<TS, TA>
+    template<typename TS, typename TA, typename TI>
+    class MethodCallback : public Callable<TS, TA>
     {
     public:
         /**
-         * Initialises this FunctionCallback with the provided
-         * pointer to function.
-         * @param function pointer to the function to call.
+         * Initializes this MethodCallback with the provided instance
+         * and pointer to method.
+         * @param instance that needs to be call. Must not be nullptr.
+         * @param method to be called.
          */
-        FunctionCallback(void (*function)(TS*, TA))
+        MethodCallback(TI* instance, void (TI::*method)(TS*, TA))
             : Callable<TS, TA>{ TYPE }
-            , _function{ function }
+            , _instance{ instance }
+            , _method{ method }
         {
             // Empty body.
         }
 
-        virtual ~FunctionCallback(void) = default;
+        virtual ~MethodCallback(void) = default;
 
         /**
-         * Calls the registered function.
+         * Calls the registered method for the registered instance.
          * @param sender instigator of the call.
          * @param args context of the call.
          */
         void call(TS* sender, TA args) const override
         {
-            _function(sender, args);
+            (_instance->*_method)(sender, args);
         }
 
         /**
-         * Checks whether this FunctionCallback is equal the provided one.
+         * Checks whether this Callable is equal the provided one.
          * @param other to test equality with.
          * @return true if this and other are equal, false otherwise.
          */
@@ -73,14 +75,14 @@ namespace Event
             {
                 return false;
             }
-            
-            auto fc = static_cast<const FunctionCallback<TS, TA>&>(other);
-            return _function == fc._function;
+            auto mc = static_cast<const MethodCallback<TS, TA, TI>&>(other);
+            return _instance == mc._instance && _method == mc._method;
         }
 
     private:
-        static const char TYPE{ 'F' };
+        static const char TYPE{ 'M' };
 
-        void (*_function)(TS*, TA);
+        TI* _instance{ };
+        void (TI::*_method)(TS*, TA);
     };
 }
