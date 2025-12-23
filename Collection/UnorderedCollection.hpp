@@ -23,7 +23,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "BaseCollection.hpp"
+#include "src/BaseCollection.hpp"
 
 namespace Collection
 {

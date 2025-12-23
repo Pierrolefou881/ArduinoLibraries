@@ -24,8 +24,8 @@
  */
 #pragma once
 #include "UnorderedList.hpp"
-#include "ArrayContainer.hpp"
-#include <U_ptr.hpp>
+#include "src/ArrayContainer.hpp"
+#include <Memory.hpp>
 
 namespace Collection
 {

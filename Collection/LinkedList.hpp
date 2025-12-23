@@ -24,9 +24,8 @@
  */
 #pragma once
 #include "UnorderedList.hpp"
-#include <S_ptr.hpp>
+#include <Memory.hpp>
 #include "Iterable.hpp"
-#include <U_ptr.hpp>
 
 namespace Collection
 {

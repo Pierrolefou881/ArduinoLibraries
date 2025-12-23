@@ -23,8 +23,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "BaseCollection.hpp"
-#include <U_ptr.hpp>
+#include "src/BaseCollection.hpp"
+#include <Memory.hpp>
 
 namespace Collection
 {
