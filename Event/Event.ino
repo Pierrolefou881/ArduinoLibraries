@@ -47,14 +47,20 @@ struct TestButton
 };
 
 TestButton btn{ 12 };
+int state{ };
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  btn.StateChanged.register_callback(&on_button_pressed);
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-
+  btn.read();
+  state ^= HIGH;
+  digitalWrite(LED_BUILTIN, state);
+  delay(500);
 }
 
 void on_button_pressed(const TestButton* sender, int args)

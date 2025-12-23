@@ -24,9 +24,10 @@
  */
 #pragma once
 #include "Callable.hpp"
-#include <LinkedList.hpp>
+#include <LinkedSet.hpp>
 #include <U_ptr.hpp>
 #include <S_ptr.hpp>
+#include "FunctionCallback.hpp"
 
 namespace Event
 {
@@ -50,7 +51,8 @@ namespace Event
 
         void register_callback(void (*func)(TS*, TA))
         {
-            
+            Memory::S_ptr<Callable<TS, TA>> callback{ new FunctionCallback<TS, TA>{ func } };
+            _callbacks->append(callback);
         }
 
         /**
@@ -60,12 +62,13 @@ namespace Event
          */
         void call(TS* sender, TA args) const override
         {
-            auto linked = static_cast<Collection::LinkedList<Memory::S_ptr<Callable<TS, TA>>>*>(_callbacks.get());
-            Collection::LinkedListIterator<Memory::S_ptr<Callable<TS, TA>>> iterator(linked);
-            while (iterator.has_next()) 
+            // auto linked = static_cast<Collection::LinkedSet<Memory::S_ptr<Callable<TS, TA>>>*>(_callbacks.get());
+            // Collection::LinkedListIterator<Memory::S_ptr<Callable<TS, TA>>> iterator(linked);
+            auto iterator = _callbacks->create_iterator();
+            while (iterator->has_next()) 
             {
-                iterator.get()->call(sender, args);
-                iterator.next();
+                iterator->get()->call(sender, args);
+                iterator->next();
             }
         }
 
@@ -89,9 +92,9 @@ namespace Event
     private:
         static const char TYPE{ 'E' };
 
-        Memory::U_ptr<Collection::LinkedList<Memory::S_ptr<Callable<TS, TA>>>> _callbacks
+        Memory::U_ptr<Collection::LinkedSet<Memory::S_ptr<Callable<TS, TA>>>> _callbacks
         {
-            Memory::make_unique<Collection::LinkedList<Memory::S_ptr<Callable<TS, TA>>>>()
+            Memory::make_unique<Collection::LinkedSet<Memory::S_ptr<Callable<TS, TA>>>>()
         };
     };
 }
