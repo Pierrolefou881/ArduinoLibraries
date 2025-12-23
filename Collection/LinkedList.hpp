@@ -1,4 +1,3 @@
-#include <stdint.h>
 /*
  * ----------------------------------------------------------------------------
  * LinkedList
@@ -26,11 +25,15 @@
 #pragma once
 #include "UnorderedList.hpp"
 #include <S_ptr.hpp>
+#include "Iterable.hpp"
+#include <U_ptr.hpp>
 
 namespace Collection
 {
+    // Forward declaration
     template<typename T>
     class LinkedList;
+
     /**
      * Iterates over LinkedLists without exposing inner algorithms.
      * @param T type conained witin the LinkedList.
@@ -48,6 +51,8 @@ namespace Collection
         {
             // Empty body.
         }
+
+        virtual ~LinkedListIterator(void) = default;
 
         /**
          * @return true if there is at least one element remaining to iterate
@@ -84,7 +89,7 @@ namespace Collection
      *          Usually smart pointers.
      */
     template<typename T>
-    class LinkedList : public UnorderedList<T>
+    class LinkedList : public UnorderedList<T>, public Iterable<T>
     {
     public:
         /**
@@ -224,6 +229,14 @@ namespace Collection
         uint16_t size(void) const override 
         { 
             return *_current_size;
+        }
+
+        /**
+         * @return a new instance of BaseIterator for this LinkedList.
+         */
+        Memory::U_ptr<BaseIterator<T>> create_iterator(void) const override
+        {
+            return { new LinkedListIterator<T>{ (LinkedList<T>*) this } };
         }
 
         friend class LinkedListIterator<T>;

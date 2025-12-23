@@ -24,11 +24,17 @@
  */
 #include "ArrayList.hpp"
 #include "LinkedList.hpp"
+#include "LinkedSet.hpp"
 
+// #define _LIST
 // #define _ARRAY_LIST
-#define _LINKED_LIST
+#define _LINKED
+// #define _LINKED_LIST
+#define _LINKED_SET
 
 Collection::UnorderedList<char>* charList{ };
+Collection::LinkedSet<char> *charSet{ };
+
 int level{ };
 
 void setup() {
@@ -39,6 +45,9 @@ void setup() {
   #ifdef _LINKED_LIST
   charList = new Collection::LinkedList<char>{ };
   #endif
+  #ifdef _LINKED_SET
+  charSet = new Collection::LinkedSet<char>{ };
+  #endif
   pinMode(LED_BUILTIN, OUTPUT);
   level = LOW;
   Serial.begin(9600);
@@ -46,6 +55,7 @@ void setup() {
 
 void loop() {
 
+  #ifdef _LIST
   uint16_t index{ };
   // put your main code here, to run repeatedly:
   if (charList->size() < 5)
@@ -67,32 +77,56 @@ void loop() {
     // charList->remove_all('a');
     charList->clear();
   }
+  print_collection(charList);
+  #endif
+
+  #ifdef _LINKED_SET
+  if (charSet->size() < 5)
+  {
+    charSet->append('a');   // Test there is no duplicate
+    charSet->append('a' + charSet->size());
+  }
+  else if (charSet->size() < 10)
+  {
+    charSet->add('a', 3);
+    charSet->add('a' + charSet->size(), 3);
+  }
+  else if (charSet->size() < 15)
+  {
+    charSet->add('a');
+    charSet->add('a' + charSet->size());
+  }
+  print_collection(charSet);
+  #endif
 
   level ^= HIGH;
   digitalWrite(LED_BUILTIN, level);
-  print_list(charList);
   delay(2000);
 }
 
-void print_list(Collection::UnorderedList<char>* list)
+void print_collection(Collection::UnorderedCollection<char>* collection)
 {
   #ifdef _ARRAY_LIST
-  for (uint16_t index = 0; index < list->size(); index++)
+  for (uint16_t index = 0; index < collection->size(); index++)
   {
-    Serial.print(list->at(index));
+    Serial.print(collection->at(index));
     Serial.print('\t');
   }
   #endif
 
+  #ifdef _LINKED
   #ifdef _LINKED_LIST
-  auto linked = static_cast<Collection::LinkedList<char>*>(list);
-  Collection::LinkedListIterator<char> iterator{ linked };
-  while (iterator.has_next())
+  auto linked = static_cast<Collection::LinkedList<char>*>(collection);
+  #elif defined (_LINKED_SET)
+  auto linked = static_cast<Collection::LinkedSet<char>*>(collection);
+  #endif
+  auto iterator = linked->create_iterator();
+  while (iterator->has_next())
   {
-    Serial.print(iterator.get());
+    Serial.print(iterator->get());
     Serial.print('\t');
-    iterator.next();
+    iterator->next();
   }
   #endif
-  Serial.println(list->size());
+  Serial.println(collection->size());
 }

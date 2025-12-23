@@ -122,7 +122,7 @@ namespace Collection
          * @return true if item is present within this ArrayList,
          *         false otherwise.
          */
-        bool contains(const T& item, uint16_t& out_index = 0) const override
+        bool contains(const T& item, uint16_t& out_index) const override
         {
             return _container->contains(item, out_index);
         }

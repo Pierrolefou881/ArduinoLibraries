@@ -35,6 +35,8 @@ namespace Collection
     class BaseIterator
     {
     public:
+        virtual ~BaseIterator(void) = default;
+
         /**
          * @return true if there is at least one element remaining to iterate
          *         over, false otherwise.
@@ -107,7 +109,7 @@ namespace Collection
          * @return true if item is present within this BaseCollection,
          *         false otherwise.
          */
-        virtual bool contains(const T& item, uint16_t& out_index = 0) const = 0;
+        virtual bool contains(const T& item, uint16_t& out_index) const = 0;
 
         /**
          * @return the number of elements contained in this BaseCollection.

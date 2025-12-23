@@ -1,7 +1,7 @@
 /*
  * ----------------------------------------------------------------------------
- * UnorderedCollection
- * Interface definition for non ordered collections.
+ * Iterable
+ * Interface definition for collections that can produce iterators.
  * Part of the ArduinoLibraries project, to be used with any Arduino board.
  * <https://github.com/Pierrolefou881/ArduinoLibraries>
  * ----------------------------------------------------------------------------
@@ -24,25 +24,24 @@
  */
 #pragma once
 #include "BaseCollection.hpp"
+#include <U_ptr.hpp>
 
 namespace Collection
 {
     /**
-     * Defines the interface for all unordered collections. Unordered
-     * collections have the capacity of adding an item at their end.
-     * @param T can be any type.
+     * Interface definition for collections that can produce iterators.
+     * Useful for LinkedLists, LinkedSets, stacks, queues,...
+     * @param T type of elements contained in the iterated over collection.
      */
     template<typename T>
-    class UnorderedCollection : public BaseCollection<T>
+    class Iterable
     {
     public:
-        virtual ~UnorderedCollection(void) = default;
+        virtual ~Iterable(void) = default;
 
         /**
-         * Adds the provided item at the end of this
-         * UnorderedCollection.
-         * @param item to add.
+         * @return a new instance of BaseIterator for this Iterable.
          */
-        virtual void append(const T& item) = 0;
+        virtual Memory::U_ptr<BaseIterator<T>> create_iterator(void) const = 0;
     };
 }
