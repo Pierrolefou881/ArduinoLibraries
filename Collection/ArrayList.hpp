@@ -50,7 +50,7 @@ namespace Collection
          */
         bool add(const T& item, uint16_t index = 0) override
         {
-            if (index >= size())
+            if (index > size())
             {
                 return false;
             }

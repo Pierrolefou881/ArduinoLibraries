@@ -106,7 +106,7 @@ namespace Collection
          */
         bool add(const T& item, uint16_t index = 0) override
         {
-            if (index >= *_current_size)
+            if (index > *_current_size)
             {
               return false;
             }
@@ -235,7 +235,7 @@ namespace Collection
          */
         Memory::U_ptr<BaseIterator<T>> create_iterator(void) const override
         {
-            return { new LinkedListIterator<T>{ (LinkedList<T>*) this } };
+            return Memory::make_unique<BaseIterator<T>, LinkedListIterator<T>>((LinkedList<T>*) this);
         }
 
         friend class LinkedListIterator<T>;

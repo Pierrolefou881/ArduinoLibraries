@@ -179,7 +179,7 @@ namespace Collection
          */
         Memory::U_ptr<BaseIterator<T>> create_iterator(void) const override
         {
-            return { new LinkedSetIterator<T>{ (LinkedSet*) this } };
+            return Memory::make_unique<BaseIterator<T>, LinkedSetIterator<T>>((LinkedSet*) this);
         }
 
         friend class LinkedSetIterator<T>;
