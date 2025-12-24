@@ -59,7 +59,7 @@ namespace Event
          */
         void register_callback(void (*function)(TS*, TA))
         {
-            Memory::S_ptr<Callable<TS, TA>> callback{ new FunctionCallback<TS, TA>{ function } };
+            auto callback = Memory::make_shared<Callable<TS, TA>, FunctionCallback<TS, TA>>(function);
             _callbacks->append(callback);
         }
 
@@ -72,7 +72,7 @@ namespace Event
         template<typename TI>
         void register_callback(TI* instance, void (TI::*method)(TS*, TA))
         {
-            Memory::S_ptr<Callable<TS, TA>> callback{ new MethodCallback<TS, TA, TI>{ instance, method } };
+            auto callback = Memory::make_shared<Callable<TS, TA>, MethodCallback<TS, TA, TI>>(instance, method);
             _callbacks->append(callback);
         }
 
@@ -106,9 +106,8 @@ namespace Event
          */
         void call(TS* sender, TA args) const override
         {
-            // auto linked = static_cast<Collection::LinkedSet<Memory::S_ptr<Callable<TS, TA>>>*>(_callbacks.get());
-            // Collection::LinkedListIterator<Memory::S_ptr<Callable<TS, TA>>> iterator(linked);
-            auto iterator = _callbacks->create_iterator();
+            auto iterable = static_cast<Collection::LinkedSet<Memory::S_ptr<Callable<TS, TA>>>*>(_callbacks.get());
+            auto iterator = iterable->create_iterator();
             while (iterator->has_next()) 
             {
                 iterator->get()->call(sender, args);
@@ -136,9 +135,10 @@ namespace Event
     private:
         static const char TYPE{ 'E' };
 
-        Memory::U_ptr<Collection::LinkedSet<Memory::S_ptr<Callable<TS, TA>>>> _callbacks
+        Memory::U_ptr<Collection::UnorderedCollection<Memory::S_ptr<Callable<TS, TA>>>> _callbacks
         {
-            Memory::make_unique<Collection::LinkedSet<Memory::S_ptr<Callable<TS, TA>>>>()
+            Memory::make_unique<Collection::UnorderedCollection<Memory::S_ptr<Callable<TS, TA>>>, 
+                                Collection::LinkedSet<Memory::S_ptr<Callable<TS, TA>>>>()
         };
 
         void do_remove(const Callable<TS, TA>& callback)
