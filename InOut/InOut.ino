@@ -27,9 +27,11 @@
 #include "DigitalOutput.hpp"
 #include "InputBase.hpp"
 #include "DigitalInput.hpp"
+#include "MemorySwitch.hpp"
 
 // #define _TEST_DIGITAL_OUTPUT
-#define _TEST_DIGITAL_INPUT
+// #define _TEST_DIGITAL_INPUT
+#define _TEST_MEMORY_SWITCH
 
 #ifdef _TEST_DIGITAL_OUTPUT
 InOut::Digital::DigitalOutput led{ 2 };
@@ -77,3 +79,16 @@ void loop() {
   Serial.println(message);
 }
 #endif
+
+#ifdef _TEST_MEMORY_SWITCH
+InOut::Digital::MemorySwitch btn{ 12 };
+
+void setup() {
+  pinMode(2, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(2, btn.read_value());
+}
+#endif
+

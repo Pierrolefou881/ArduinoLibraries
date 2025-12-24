@@ -1,7 +1,8 @@
 /*
  * ----------------------------------------------------------------------------
- * DigitalOutput
- * Concrete type managing any digital input pin on Arduino boards. Examples
+ * MemorySwitch
+ * DigitalInput decorator for memory buttons that change state when pressed
+ * only.
  * of digital outputs include buttons, switches or any binary sensors.
  * Part of the ArduinoLibraries project, to be used with any Arduino board.
  * <https://github.com/Pierrolefou881/ArduinoLibraries>
@@ -24,27 +25,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "InputBase.hpp"
+#include "DigitalInput.hpp"
+#include <Memory.hpp>
 
 namespace InOut
 {
     namespace Digital
     {
         /**
-         * Manages digital input pins on Arduino boards.
-         * Digital input pins can either have a value of HIGH (1) or
-         * LOW(0).
-         */      
-        class DigitalInput : public InputBase
+         * DigitalInput decorator that does not change its state until
+         * the attached button is pressed again.
+         */
+        class MemorySwitch : public DigitalInput
         {
         public:
-            DigitalInput(uint8_t pin_number);
-            virtual ~DigitalInput(void) = default;
-
-            bool is_active(void);
+            MemorySwitch(uint8_t pin_number);
+            virtual ~MemorySwitch(void) = default;
 
         protected:
             int16_t actuate_sensor(void) const override;
+
+        private:
+            Memory::U_ptr<DigitalInput> _switch{ };
+
+            void on_switch_state_changed(const InOutBase* sender, int args);
         };
     }
 }

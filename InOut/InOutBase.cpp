@@ -51,4 +51,5 @@ void InOut::InOutBase::set_current_state(int16_t new_state)
         return;
     }
     _current_state = new_state;
+    StateChanged->call(this, new_state);
 }

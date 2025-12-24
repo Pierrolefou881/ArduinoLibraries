@@ -24,6 +24,8 @@
  */
 #pragma once
 #include <stdint.h>
+#include <EventHandler.hpp>
+#include <Memory.hpp>
 
 namespace InOut
 {
@@ -38,6 +40,14 @@ namespace InOut
     class InOutBase
     {
     public:
+        /**
+         * Triggered when this InOutBase's _current_state member changes value.
+         */
+        const Memory::U_ptr<Event::EventHandler<const InOut::InOutBase, int16_t>> StateChanged
+        {
+            Memory::make_unique<Event::EventHandler<const InOut::InOutBase, int16_t>>()
+        };
+
         virtual ~InOutBase(void) = default;
 
         uint8_t get_pin_number(void) const;
