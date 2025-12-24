@@ -23,12 +23,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "Callable.hpp"
+#include "src/Callable.hpp"
 #include <LinkedSet.hpp>
-#include <U_ptr.hpp>
-#include <S_ptr.hpp>
-#include "FunctionCallback.hpp"
-#include "MethodCallback.hpp"
+#include <Memory.hpp>
+#include "src/FunctionCallback.hpp"
+#include "src/MethodCallback.hpp"
 
 namespace Event
 {
@@ -78,6 +77,29 @@ namespace Event
         }
 
         /**
+         * Unsubscribes a function from this EventHandler.
+         * @param function to unregister
+         */
+        void remove_callback(void (*function)(TS*, TA))
+        {
+            FunctionCallback<TS, TA> callback{ function };
+            do_remove(callback);
+        }
+
+        /**
+         * Unregisters an instance method from this EventHandler.
+         * @param TI type of instance.
+         * @param instance that was called. Must not be nullptr.
+         * @param method that needs to be removed.
+         */
+        template<typename TI>
+        void remove_callback(TI* instance, void (TI::*method)(TS*, TA))
+        {
+            MethodCallback<TS, TA, TI> callback{ instance, method };
+            do_remove(callback);
+        }
+
+        /**
          * Calls all registered callbacks.
          * @param sender instigator of the call, usually this EventHandler's owner.
          * @param args context of the call, the reason to change.
@@ -118,5 +140,23 @@ namespace Event
         {
             Memory::make_unique<Collection::LinkedSet<Memory::S_ptr<Callable<TS, TA>>>>()
         };
+
+        void do_remove(const Callable<TS, TA>& callback)
+        {
+            auto iterator = _callbacks->create_iterator();
+            bool has_found{ };
+            Memory::S_ptr<Callable<TS, TA>> current_item{ };
+            while (iterator->has_next() && !has_found)
+            {
+                current_item = iterator->get();
+                has_found = callback.equals(current_item);
+                iterator->next();
+            }
+
+            if (has_found)
+            {
+                _callbacks->remove(current_item);
+            }
+        }
     };
 }
