@@ -25,15 +25,18 @@
 #include "ArrayList.hpp"
 #include "LinkedList.hpp"
 #include "LinkedSet.hpp"
+#include "Queue.hpp"
 
 // #define _LIST
 // #define _ARRAY_LIST
 #define _LINKED
 // #define _LINKED_LIST
-#define _LINKED_SET
+// #define _LINKED_SET
+#define _QUEUE
 
 Collection::UnorderedList<char>* charList{ };
-Collection::LinkedSet<char> *charSet{ };
+Collection::LinkedSet<char>* charSet{ };
+Collection::ProcessingCollection<char>* processChar{ };
 
 int level{ };
 
@@ -47,6 +50,9 @@ void setup() {
   #endif
   #ifdef _LINKED_SET
   charSet = new Collection::LinkedSet<char>{ };
+  #endif
+  #ifdef _QUEUE
+  processChar = new Collection::Queue<char>{ };
   #endif
   pinMode(LED_BUILTIN, OUTPUT);
   level = LOW;
@@ -99,12 +105,31 @@ void loop() {
   print_collection(charSet);
   #endif
 
+  #ifdef _QUEUE
+  if (processChar->size() < 10)
+  {
+    auto to_insert = 'a' + processChar->size();
+    processChar->push(to_insert);
+  }
+  else
+  {
+    // Serial.print("POPPED\t");
+    // Serial.println(*(processChar->pop()));
+    processChar->clear();
+  }
+  print_collection(processChar);
+  #endif
+
   level ^= HIGH;
   digitalWrite(LED_BUILTIN, level);
   delay(2000);
 }
 
+#ifdef _QUEUE
+void print_collection(Collection::ProcessingCollection<char>* collection)
+#else
 void print_collection(Collection::UnorderedCollection<char>* collection)
+#endif
 {
   #ifdef _ARRAY_LIST
   for (uint16_t index = 0; index < collection->size(); index++)
@@ -119,6 +144,8 @@ void print_collection(Collection::UnorderedCollection<char>* collection)
   auto linked = static_cast<Collection::LinkedList<char>*>(collection);
   #elif defined (_LINKED_SET)
   auto linked = static_cast<Collection::LinkedSet<char>*>(collection);
+  #elif defined(_QUEUE)
+  auto linked = static_cast<Collection::ProcessingCollection<char>*>(collection);
   #endif
   auto iterator = linked->create_iterator();
   while (iterator->has_next())

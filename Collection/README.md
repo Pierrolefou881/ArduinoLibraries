@@ -108,6 +108,34 @@ item, if any.
 ### UnorderedList
 Merges the UnorderedCollection and BaseList interfaces.
 
+### ProcessingCollection
+Unordered collections used as waiting list or for stocking commands and
+data to be treated. Base abstraction for stacks and queues. **ProcessingCollection**
+implements **Iterable** to create **ProcessingCollectionIterator** instances.
+
+#### push()
+Adds the provided item to the collection.
+- Parameter **item** to add.
+
+#### pop()
+Removes the head item from the collection. On stacks, that would be the
+last inserted element, the first on queues.
+- Return type: S_ptr<T>.
+
+#### peek()
+Access the head element without removing it. On stack, the last inserted
+element, the first on queues.
+- Return type: T&.
+
+#### clear()
+Removes all elements from the collection.
+
+#### is_empty()
+- Return type: bool, true if the collection has no elements, false otherwise.
+
+#### size()
+- Retunr type: unsigned int, the number of elements in the collection.
+
 ### Iterable
 Defines iterable collections, i.e. the possibility to create an
 instance of **BaseIterator**
@@ -139,3 +167,8 @@ therefore generate **LinkedSetIterator**s.
 occurrence per item and require strict memory allocation policies.
 As a linked collection, acces through inex is costs more in terms
 of computation times than array based collections.
+
+### Queue
+**Queue** inherits from **ProcessingCollection** as a
+first in, first out collection. The head is therefore set
+as the first element to be inserted.
