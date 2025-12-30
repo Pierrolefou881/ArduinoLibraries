@@ -28,6 +28,15 @@
 namespace Collection
 {
     /**
+     * Defines the sorting order for comparisons in
+     * OrderedCollection implementations.
+     */
+    enum class SortingOrder
+    {
+        ASCENDING,
+        DESCENDING
+    };
+    /**
      * Declarative interface for ordered collections. In such
      * collections, items shall be sorted according to an
      * ascending or descending order.
@@ -37,16 +46,6 @@ namespace Collection
     class OrderedCollection : public BaseCollection<T>
     {
     public:
-        /**
-         * Defines the sorting order for comparisons in
-         * OrderedCollection implementations.
-         */
-        enum class SortingOrder
-        {
-            ASCENDING,
-            DESCENDING
-        };
-        
         virtual ~OrderedCollection(void) = default;
     };
 }

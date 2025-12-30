@@ -24,6 +24,7 @@
  */
 #pragma once
 #include "UnorderedCollection.hpp"
+#include "Iterable.hpp"
 #include "LinkedList.hpp"
 #include <Memory.hpp>
 

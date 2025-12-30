@@ -1,7 +1,7 @@
 /*
  * ----------------------------------------------------------------------------
  * ArrayContainer
- * Backend logic for array based collection memory allocation.
+ * Abstract backend logic for array based collection memory allocation.
  * Part of the ArduinoLibraries project, to be used with any Arduino board.
  * <https://github.com/Pierrolefou881/ArduinoLibraries>
  * ----------------------------------------------------------------------------
@@ -31,13 +31,26 @@ namespace Collection
      * Wrapper for arrays used in array-based collections such as
      * ArrayList, OrderedSet,...
      * ArrayContainer manages dynamic resizing of the array, insertion
-     * and deletion of items.
+     * and deletion of items. It is however an abstract class.
+     * Concrete classes should implement do_add() and contains(); those
+     * methods define ordered or unordered sorting.
      * @param T can be any type.
      */
     template<typename T>
     class ArrayContainer
     {
     public:
+        /**
+         * Initializes this ArrayContainer with an empty array and
+         * duplication rule.
+         * @param allows_duplicates indicates whether this ArrayContainer
+         *        shall allow data duplication. True by default.
+         */
+        ArrayContainer(bool allows_duplicates = true) : _allow_duplicates{ allows_duplicates }
+        {
+            // Empty body
+        }
+
         virtual ~ArrayContainer(void)
         {
             delete _data;
@@ -51,19 +64,7 @@ namespace Collection
          * @param index of insertion.
          * @return true if insertion succesfull, false otherwise.
          */
-        bool add(const T& item, uint16_t index = 0)
-        {
-            // Out of bounds, don't go further. Allow one step out of bound for appending.
-            if (index > _current_size)
-            {
-                return false;
-            }
-
-            manage_capacity(_current_size + 1);
-            _current_size++;
-            do_add(item, index);
-            return true;
-        }
+        virtual bool add(const T& item, uint16_t index = 0) = 0;
 
         /**
          * Removes the first encountered occurrence of the provided
@@ -141,19 +142,7 @@ namespace Collection
          * @param out_index of the eventually found item.
          * @return true if the array contains the item, false otherwise.
          */
-        virtual bool contains(const T& item, uint16_t& out_index) const
-        {
-            out_index = 0;
-            for (uint16_t current_index = 0; current_index < _current_size; current_index++)
-            {
-                if (item == _data[current_index])
-                {
-                    out_index = current_index;
-                    return true;
-                }
-            }
-            return false;
-        }
+        virtual bool contains(const T& item, uint16_t& out_index) const = 0;
 
         /**
          * Retrieves an item at the given index.
@@ -162,7 +151,7 @@ namespace Collection
          * @param index of the data to retrieve. Must be within bounds.
          * @return the reference to the sought after item.
          */
-        T& data_at(uint16_t index) { return _data[index]; }
+        T& data_at(uint16_t index) const { return _data[index]; }
 
         /**
          * @return this ArrayContainer's current size.
@@ -177,8 +166,10 @@ namespace Collection
          * @param item to add.
          * @param index of insertion. Must be within bounds.
          */
-        virtual void do_add(const T& item, uint16_t index)
+        void do_add(const T& item, uint16_t index)
         {
+            manage_capacity(_current_size + 1);
+            _current_size++;
             T current_item = _data[index];
             _data[index] = item;
             for (auto i = index + 1; i < _current_size; i++)
@@ -189,10 +180,22 @@ namespace Collection
             }
         }
 
+        /**
+         * @return the number of elements contained in the array.
+         */
+        uint16_t current_size(void) const { return _current_size; }
+
+        /**
+         * @return true if this ArrayContainer allows data duplication,
+         *         false otherwise.
+         */
+        bool allows_duplicates(void) const { return _allow_duplicates; }
+
     private:
         static const uint16_t MIN_CAPACITY{ 3 };
         static const uint16_t RESIZING_FACTOR{ 2 };
 
+        const bool _allow_duplicates{ };
         T* _data{ new T[MIN_CAPACITY] };
         uint16_t _current_size{ };
         uint16_t _current_capacity{ MIN_CAPACITY };

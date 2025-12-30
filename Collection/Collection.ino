@@ -25,18 +25,22 @@
 #include "ArrayList.hpp"
 #include "LinkedList.hpp"
 #include "LinkedSet.hpp"
+#include "OrderedSet.hpp"
 #include "Queue.hpp"
 
 // #define _LIST
 // #define _ARRAY_LIST
-#define _LINKED
+#define _ORDERED_SET
+// #define _LINKED
 // #define _LINKED_LIST
 // #define _LINKED_SET
-#define _QUEUE
+// #define _QUEUE
 
 Collection::UnorderedList<char>* charList{ };
 Collection::LinkedSet<char>* charSet{ };
+Collection::OrderedSet<char>* orderedCharSet{ };
 Collection::ProcessingCollection<char>* processChar{ };
+char characters[] = { 'f', 'U', 'z', 'a', 'm', 't', 'B', 'P'};
 
 int level{ };
 
@@ -45,15 +49,24 @@ void setup() {
   #ifdef _ARRAY_LIST
   charList = new Collection::ArrayList<char>{ };
   #endif
+
   #ifdef _LINKED_LIST
   charList = new Collection::LinkedList<char>{ };
   #endif
+
+  #ifdef _ORDERED_SET
+  // orderedCharSet = new Collection::OrderedSet<char>{ };
+  orderedCharSet = new Collection::OrderedSet<char>{ Collection::SortingOrder::DESCENDING };
+  #endif
+
   #ifdef _LINKED_SET
   charSet = new Collection::LinkedSet<char>{ };
   #endif
+
   #ifdef _QUEUE
   processChar = new Collection::Queue<char>{ };
   #endif
+
   pinMode(LED_BUILTIN, OUTPUT);
   level = LOW;
   Serial.begin(9600);
@@ -80,10 +93,20 @@ void loop() {
   {
     // charList->remove_at(index);
     // charList->remove('B');
-    // charList->remove_all('a');
-    charList->clear();
+    charList->remove_all('a');
+    // charList->clear();
   }
   print_collection(charList);
+  #endif
+
+  #ifdef _ORDERED_SET
+  auto max_char_num = sizeof(characters) / sizeof(char);
+  if (orderedCharSet->size() < max_char_num)
+  {
+    orderedCharSet->add(characters[orderedCharSet->size()]);
+    orderedCharSet->add(characters[orderedCharSet->size()]);
+  }
+  print_collection(orderedCharSet);
   #endif
 
   #ifdef _LINKED_SET
@@ -128,10 +151,11 @@ void loop() {
 #ifdef _QUEUE
 void print_collection(Collection::ProcessingCollection<char>* collection)
 #else
-void print_collection(Collection::UnorderedCollection<char>* collection)
+void print_collection(Collection::BaseCollection<char>* collection)
 #endif
 {
-  #ifdef _ARRAY_LIST
+  Serial.println("Collection");
+  #if (defined(_ARRAY_LIST) || defined(_ORDERED_SET))
   for (uint16_t index = 0; index < collection->size(); index++)
   {
     Serial.print(collection->at(index));
