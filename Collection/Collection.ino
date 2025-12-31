@@ -30,11 +30,11 @@
 
 // #define _LIST
 // #define _ARRAY_LIST
-#define _ORDERED_SET
-// #define _LINKED
+// #define _ORDERED_SET
+#define _LINKED
 // #define _LINKED_LIST
 // #define _LINKED_SET
-// #define _QUEUE
+#define _QUEUE
 
 Collection::UnorderedList<char>* charList{ };
 Collection::LinkedSet<char>* charSet{ };
@@ -136,9 +136,9 @@ void loop() {
   }
   else
   {
-    // Serial.print("POPPED\t");
-    // Serial.println(*(processChar->pop()));
-    processChar->clear();
+    Serial.print("POPPED\t");
+    Serial.println(processChar->pop());
+    // processChar->clear();
   }
   print_collection(processChar);
   #endif
@@ -154,7 +154,6 @@ void print_collection(Collection::ProcessingCollection<char>* collection)
 void print_collection(Collection::BaseCollection<char>* collection)
 #endif
 {
-  Serial.println("Collection");
   #if (defined(_ARRAY_LIST) || defined(_ORDERED_SET))
   for (uint16_t index = 0; index < collection->size(); index++)
   {

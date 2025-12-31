@@ -36,7 +36,8 @@ namespace Collection
     /**
      * Iterates over ProcessingCollections without exposing their inner
      * algorithms.
-     * @param T type of element contained in the queue.
+     * @param T type of element contained in the queue. Must have a default
+     *        constructor.
      */
     template<typename T>
     class ProcessingCollectionIterator : public BaseIterator<T>
@@ -68,7 +69,7 @@ namespace Collection
          */
         T& get(void) const override
         {
-            return *(_collection->_tail->_data);
+            return _collection->_tail->_data;
         }
 
         /**
@@ -90,6 +91,7 @@ namespace Collection
      * the closest element. ProcessingCollection is implemented as a 
      * linked collection and can produce iterators.
      * @param T type of element contained in this ProcessingCollection.
+     *        Must have a default constructor.
      */
     template<typename T>
     class ProcessingCollection : public Iterable<T>
@@ -110,9 +112,9 @@ namespace Collection
 
         /**
          * Accesses and removes the head element.
-         * @return the smart pointer to the head element.
+         * @return the head element.
          */
-        Memory::S_ptr<T> pop(void)
+        T pop(void)
         {
             if (is_empty())
             {
@@ -175,7 +177,7 @@ namespace Collection
          * @param item can be nullptr.
          */
         ProcessingCollection(const T& item) 
-            : _data{ Memory::make_shared<T>(item) }
+            : _data{ item }
         {
             // Empty body.
         }
@@ -199,6 +201,6 @@ namespace Collection
 
     private:
         Memory::S_ptr<ProcessingCollection<T>> _tail{ };
-        Memory::S_ptr<T> _data{ };
+        T _data{ };
     };
 }

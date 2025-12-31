@@ -36,7 +36,8 @@ namespace Collection
 
     /**
      * Iterates over LinkedSets without exposing inner algorithms.
-     * @param T type conained witin the LinkedSet.
+     * @param T type conained witin the LinkedSet. Must have a default
+     *          Constructor.
      */
     template<typename T>
     class LinkedSetIterator : public BaseIterator<T>

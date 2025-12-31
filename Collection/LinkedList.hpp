@@ -35,7 +35,8 @@ namespace Collection
 
     /**
      * Iterates over LinkedLists without exposing inner algorithms.
-     * @param T type conained witin the LinkedList.
+     * @param T type conained witin the LinkedList. Must have a default
+     *        constructor.
      */
     template<typename T>
     class LinkedListIterator : public BaseIterator<T>
@@ -67,7 +68,7 @@ namespace Collection
          */
         T& get(void) const override
         {
-            return *(_list->_next->_data);
+            return _list->_next->_data;
         }
 
         /**
@@ -144,7 +145,7 @@ namespace Collection
                 return;
             }
 
-            if (item == *(_next->_data))
+            if (item == _next->_data)
             {
                 remove_link();
                 return;
@@ -178,7 +179,7 @@ namespace Collection
                 return;
             }
 
-            if (item == *(_next->_data))
+            if (item == _next->_data)
             {
                 remove_link();
                 remove_all(item);   // re-run to avoid jumping links.
@@ -207,7 +208,7 @@ namespace Collection
          */
         T& at(uint16_t index) const override
         {
-            return *(access_link(index, 0)->_next->_data);
+            return access_link(index, 0)->_next->_data;
         }
 
         /**
@@ -219,7 +220,7 @@ namespace Collection
          */
         bool contains(const T& item, uint16_t& out_index = 0) const override
         {
-            return _next != nullptr && (*(_next->_data) == item || _next->contains(item, ++out_index));
+            return _next != nullptr && (_next->_data == item || _next->contains(item, ++out_index));
         }
 
         /**
@@ -241,13 +242,13 @@ namespace Collection
         friend class LinkedListIterator<T>;
 
     private:
-        Memory::S_ptr<T> _data{ };
+        T _data{ };
         Memory::S_ptr<LinkedList<T>> _next{ };
         Memory::S_ptr<uint16_t> _current_size{ Memory::make_shared<uint16_t>() };
 
         // Link insertion Ctor.
         LinkedList(const T& item, const Memory::S_ptr<uint16_t>& current_size)
-            : _data{ Memory::make_shared<T>(item) }
+            : _data{ item }
             , _next{ }
             , _current_size{ current_size }
         {
