@@ -1,7 +1,7 @@
 /*
  * ----------------------------------------------------------------------------
- * Queue
- * FIFO collection for data processing and concurrent access avoidance.
+ * Stack
+ * LIFO collection for data processing and concurrent access avoidance.
  * Part of the ArduinoLibraries project, to be used with any Arduino board.
  * <https://github.com/Pierrolefou881/ArduinoLibraries>
  * ----------------------------------------------------------------------------
@@ -24,46 +24,45 @@
  */
 #pragma once
 #include "ProcessingCollection.hpp"
-#include "Iterable.hpp"
 
 namespace Collection
 {
     /**
-     * First in, first out collection for processing purposes and avoiding
+     * Last in, first out collection for processing purposes and avoiding
      * concurrent accesses.
      * @param T can be any data type. Must have a default constructor.
      */
     template<typename T>
-    class Queue : public ProcessingCollection<T>
+    class Stack : public ProcessingCollection<T>
     {
     public:
         /**
-         * Initializes this Queue as an empty collection.
+         * Initializes this Stack as an empty collection.
          */
-        Queue(void) = default;
-
-        virtual ~Queue(void) = default;
+        Stack(void) = default;
+        virtual ~Stack(void) = default;
 
         /**
-         * Adds the provided item at the tail of this Queue.
+         * Adds the provided item to this Stack.
          * @param item to add.
          */
         void push(const T& item) override
         {
-            if (ProcessingCollection<T>::is_empty())
-            {
-              auto new_tail = Memory::S_ptr<ProcessingCollection<T>>{ new Queue{ item } };
-              ProcessingCollection<T>::set_tail(new_tail);
-            }
-            else
-            {
-              ProcessingCollection<T>::get_tail()->push(item);
-            }
+            auto tmp = ProcessingCollection<T>::get_tail();
+            auto new_tail = Memory::S_ptr<ProcessingCollection<T>>{ new Stack{ item } };
+            static_cast<Stack<T>*>(new_tail.get())->attach(tmp);
+            ProcessingCollection<T>::set_tail(new_tail);
         }
+
     private:
-        Queue(const T& data) : ProcessingCollection<T>{ data }
+        Stack(const T& data) : ProcessingCollection<T>{ data }
         {
             // Empty body.
+        }
+
+        void attach(const Memory::S_ptr<ProcessingCollection<T>>& link)
+        {
+            ProcessingCollection<T>::set_tail(link);
         }
     };
 }

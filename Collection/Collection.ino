@@ -27,6 +27,7 @@
 #include "LinkedSet.hpp"
 #include "OrderedSet.hpp"
 #include "Queue.hpp"
+#include "Stack.hpp"
 #include "ArrayMap.hpp"
 
 // #define _LIST
@@ -36,7 +37,8 @@
 // #define _LINKED_LIST
 // #define _LINKED_SET
 // #define _QUEUE
-#define _ARRAY_MAP
+#define _STACK
+// #define _ARRAY_MAP
 
 Collection::UnorderedList<char>* charList{ };
 Collection::LinkedSet<char>* charSet{ };
@@ -68,6 +70,10 @@ void setup() {
 
   #ifdef _QUEUE
   processChar = new Collection::Queue<char>{ };
+  #endif
+
+  #ifdef _STACK
+  processChar = new Collection::Stack<char>{ };
   #endif
 
   #ifdef _ARRAY_MAP
@@ -136,7 +142,7 @@ void loop() {
   print_collection(charSet);
   #endif
 
-  #ifdef _QUEUE
+  #if defined(_QUEUE) || defined(_STACK)
   if (processChar->size() < 10)
   {
     auto to_insert = 'a' + processChar->size();
@@ -170,7 +176,7 @@ void loop() {
   delay(2000);
 }
 
-#ifdef _QUEUE
+#if defined(_QUEUE) || defined(_STACK)
 void print_collection(Collection::ProcessingCollection<char>* collection)
 #elif defined (_ARRAY_MAP)
 void print_collection(Collection::Map<int, char>* collection)
@@ -191,7 +197,7 @@ void print_collection(Collection::BaseCollection<char>* collection)
   auto linked = static_cast<Collection::LinkedList<char>*>(collection);
   #elif defined (_LINKED_SET)
   auto linked = static_cast<Collection::LinkedSet<char>*>(collection);
-  #elif defined(_QUEUE)
+  #elif defined(_QUEUE) || defined(_STACK)
   auto linked = static_cast<Collection::ProcessingCollection<char>*>(collection);
   #elif defined(_ARRAY_MAP)
   auto linked = static_cast<Collection::ArrayMap<int, char>*>(collection);
