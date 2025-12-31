@@ -37,8 +37,8 @@
 // #define _LINKED_LIST
 // #define _LINKED_SET
 // #define _QUEUE
-#define _STACK
-// #define _ARRAY_MAP
+// #define _STACK
+#define _ARRAY_MAP
 
 Collection::UnorderedList<char>* charList{ };
 Collection::LinkedSet<char>* charSet{ };
@@ -166,7 +166,8 @@ void loop() {
   else
   {
       // charMap->remove(0);
-      charMap->clear();
+      charMap->remove_all('B');
+      // charMap->clear();
   }
   print_collection(charMap);
   #endif

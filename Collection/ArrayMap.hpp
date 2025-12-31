@@ -1,3 +1,4 @@
+#include <stdint.h>
 /*
  * ----------------------------------------------------------------------------
  * ArrayMap
@@ -26,7 +27,7 @@
 #include "Map.hpp"
 #include "Iterable.hpp"
 #include <Memory.hpp>
-#include "LinkedList.hpp"
+#include "Stack.hpp"
 
 namespace Collection
 {
@@ -132,15 +133,18 @@ namespace Collection
          */
         void remove_all(const TV& item) override
         {
-            LinkedList<uint16_t> indices{ };
-            uint16_t index{ };
-            auto iterator = create_iterator();
+            Stack<uint16_t> indices{ };
+            for (uint16_t i = 0; i < size(); i++)
+            {
+                if (_keyvals->at(i).value == item)
+                {
+                    indices.push(i);
+                }
+            }
+            auto iterator = indices.create_iterator();
             while (iterator->has_next())
             {
-                if (iterator->get().value == item)
-                {
-                    // todo stack
-                }
+                _keyvals->remove_at(iterator->get());
                 iterator->next();
             }
         }
