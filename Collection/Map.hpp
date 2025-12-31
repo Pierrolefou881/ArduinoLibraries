@@ -37,8 +37,13 @@ namespace Collection
     template<typename TK, typename TV>
     struct KeyValue
     {
-        const TK key{ };
+        TK key{ };
         TV value{ };
+
+        /**
+         * Default initializer for declaration purposes.
+         */
+        KeyValue(void) = default;
 
         /**
          * Initializes this KeyValue with the provided key and value.
@@ -53,12 +58,12 @@ namespace Collection
 
         virtual ~KeyValue(void) = default;
 
-        friend bool operator ==(const KeyValue<TK, TV>& other) const { return key == other.key; }
-        friend bool operator ==(const KeyValue<TK, TV>& other) const { return key != other.key; }
-        friend bool operator >=(const KeyValue<TK, TV>& other) const { return key >= other.key; }
-        friend bool operator <=(const KeyValue<TK, TV>& other) const { return key <= other.key; }
-        friend bool operator >(const KeyValue<TK, TV>& other) const { return key > other.key; }
-        friend bool operator <(const KeyValue<TK, TV>& other) const { return key < other.key; }
+        friend bool operator ==(const KeyValue<TK, TV>& a, const KeyValue<TK, TV>& b) { return a.key == b.key; }
+        friend bool operator !=(const KeyValue<TK, TV>& a, const KeyValue<TK, TV>& b) { return a.key != b.key; }
+        friend bool operator >=(const KeyValue<TK, TV>& a, const KeyValue<TK, TV>& b) { return a.key >= b.key; }
+        friend bool operator <=(const KeyValue<TK, TV>& a, const KeyValue<TK, TV>& b) { return a.key <= b.key; }
+        friend bool operator >(const KeyValue<TK, TV>& a, const KeyValue<TK, TV>& b) { return a.key > b.key; }
+        friend bool operator <(const KeyValue<TK, TV>& a, const KeyValue<TK, TV>& b) { return a.key < b.key; }
 
         
     };
@@ -69,7 +74,7 @@ namespace Collection
     template<typename TK, typename TV>
     bool operator !=(const KeyValue<TK, TV>& keyval, const TK& key) { return keyval.key != key; }
     template<typename TK, typename TV>
-    bool operator ==(const TK& key, const KeyValue<TK, TV>& keyval) { return keyval != key; }
+    bool operator !=(const TK& key, const KeyValue<TK, TV>& keyval) { return keyval != key; }
     template<typename TK, typename TV>
     bool operator >=(const KeyValue<TK, TV>& keyval, const TK& key) { return keyval.key >= key; }
     template<typename TK, typename TV>
@@ -99,7 +104,7 @@ namespace Collection
     class Map
     {
     public:
-        virtual Map(void) = default;
+        virtual ~Map(void) = default;
 
         /**
          * Registers the provided value with the provided key.
@@ -143,7 +148,7 @@ namespace Collection
          * @param key to check the presence of.
          * @return true if key found used in this Map, false otherwise.
          */
-        virtual bool contains_key(const TK& key) const = 0
+        virtual bool contains_key(const TK& key) const = 0;
 
         /**
          * Checks whether the provided value is present in this Map.

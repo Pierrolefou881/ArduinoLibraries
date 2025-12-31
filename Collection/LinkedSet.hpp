@@ -187,7 +187,7 @@ namespace Collection
         friend class LinkedSetIterator<T>;
 
     private:
-        Memory::U_ptr<LinkedList<T>> _list
+        const Memory::U_ptr<LinkedList<T>> _list
         {
             Memory::make_unique<LinkedList<T>>()
         };

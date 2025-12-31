@@ -132,7 +132,7 @@ namespace Collection
          */
         T& peek(void) const
         {
-            return *(_tail->_data);
+            return _tail->_data;
         }
 
         /**

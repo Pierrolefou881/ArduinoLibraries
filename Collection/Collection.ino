@@ -27,6 +27,7 @@
 #include "LinkedSet.hpp"
 #include "OrderedSet.hpp"
 #include "Queue.hpp"
+#include "ArrayMap.hpp"
 
 // #define _LIST
 // #define _ARRAY_LIST
@@ -34,12 +35,14 @@
 #define _LINKED
 // #define _LINKED_LIST
 // #define _LINKED_SET
-#define _QUEUE
+// #define _QUEUE
+#define _ARRAY_MAP
 
 Collection::UnorderedList<char>* charList{ };
 Collection::LinkedSet<char>* charSet{ };
 Collection::OrderedSet<char>* orderedCharSet{ };
 Collection::ProcessingCollection<char>* processChar{ };
+Collection::Map<int, char>* charMap{ };
 char characters[] = { 'f', 'U', 'z', 'a', 'm', 't', 'B', 'P'};
 
 int level{ };
@@ -55,8 +58,8 @@ void setup() {
   #endif
 
   #ifdef _ORDERED_SET
-  // orderedCharSet = new Collection::OrderedSet<char>{ };
-  orderedCharSet = new Collection::OrderedSet<char>{ Collection::SortingOrder::DESCENDING };
+  orderedCharSet = new Collection::OrderedSet<char>{ };
+  // orderedCharSet = new Collection::OrderedSet<char>{ Collection::SortingOrder::DESCENDING };
   #endif
 
   #ifdef _LINKED_SET
@@ -66,6 +69,10 @@ void setup() {
   #ifdef _QUEUE
   processChar = new Collection::Queue<char>{ };
   #endif
+
+  #ifdef _ARRAY_MAP
+  charMap = new Collection::ArrayMap<int, char>{ };
+  #endif 
 
   pinMode(LED_BUILTIN, OUTPUT);
   level = LOW;
@@ -103,8 +110,9 @@ void loop() {
   auto max_char_num = sizeof(characters) / sizeof(char);
   if (orderedCharSet->size() < max_char_num)
   {
-    orderedCharSet->add(characters[orderedCharSet->size()]);
-    orderedCharSet->add(characters[orderedCharSet->size()]);
+    auto size = orderedCharSet->size();
+    orderedCharSet->add(characters[size]);
+    orderedCharSet->add(characters[size]);
   }
   print_collection(orderedCharSet);
   #endif
@@ -143,6 +151,20 @@ void loop() {
   print_collection(processChar);
   #endif
 
+  #ifdef _ARRAY_MAP
+  auto size = charMap->size();
+  if (size < 10)
+  {
+      charMap->add(size, 'A' + size % 2);
+  }
+  else
+  {
+      // charMap->remove(0);
+      charMap->clear();
+  }
+  print_collection(charMap);
+  #endif
+
   level ^= HIGH;
   digitalWrite(LED_BUILTIN, level);
   delay(2000);
@@ -150,6 +172,8 @@ void loop() {
 
 #ifdef _QUEUE
 void print_collection(Collection::ProcessingCollection<char>* collection)
+#elif defined (_ARRAY_MAP)
+void print_collection(Collection::Map<int, char>* collection)
 #else
 void print_collection(Collection::BaseCollection<char>* collection)
 #endif
@@ -169,12 +193,22 @@ void print_collection(Collection::BaseCollection<char>* collection)
   auto linked = static_cast<Collection::LinkedSet<char>*>(collection);
   #elif defined(_QUEUE)
   auto linked = static_cast<Collection::ProcessingCollection<char>*>(collection);
+  #elif defined(_ARRAY_MAP)
+  auto linked = static_cast<Collection::ArrayMap<int, char>*>(collection);
   #endif
   auto iterator = linked->create_iterator();
   while (iterator->has_next())
   {
+    #ifdef _ARRAY_MAP
+    auto item = iterator->get();
+    Serial.print(item.key);
+    Serial.print(", ");
+    Serial.print(item.value);
+    Serial.print('\t');
+    #else
     Serial.print(iterator->get());
     Serial.print('\t');
+    #endif
     iterator->next();
   }
   #endif

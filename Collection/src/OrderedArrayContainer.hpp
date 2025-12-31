@@ -120,8 +120,8 @@ namespace Collection
             {
                 out_index = max + 1;
             }
-            else if ((_order == SortingOrder::ASCENDING && item < lower_boundary) 
-                    || (_order == SortingOrder::DESCENDING && item > lower_boundary))
+            else if ((_order == SortingOrder::ASCENDING && item <= lower_boundary) 
+                    || (_order == SortingOrder::DESCENDING && item >= lower_boundary))
             {
                 out_index = min;
             }

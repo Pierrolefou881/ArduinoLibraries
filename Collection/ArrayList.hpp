@@ -133,7 +133,7 @@ namespace Collection
     private:
         static const bool ALLOWS_DUPLICATES{ true };
 
-        Memory::U_ptr<ArrayContainer<T>> _container
+        const Memory::U_ptr<ArrayContainer<T>> _container
         { 
             Memory::make_unique<ArrayContainer<T>, UnorderedArrayContainer<T>>(ALLOWS_DUPLICATES)  
         };

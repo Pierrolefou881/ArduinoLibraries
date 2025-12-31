@@ -221,6 +221,7 @@ namespace Collection
                 _data[index] = tmp[index];
             }
             delete tmp;
+            _current_capacity = new_size;
         }
     };
 }

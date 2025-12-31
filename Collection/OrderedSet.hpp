@@ -45,7 +45,7 @@ namespace Collection
          * @param order set to ascending by default.
          */
         OrderedSet(const Collection::SortingOrder& order = Collection::SortingOrder::ASCENDING)
-            : _container{ Memory::make_unique<ArrayContainer<T>, OrderedArrayContainer<T>>(order) }
+            : _container{ Memory::make_unique<ArrayContainer<T>, OrderedArrayContainer<T>>(order, ALLOWS_DUPLICATES) }
         {
             // Empty body
         }
@@ -124,6 +124,7 @@ namespace Collection
         }
 
     private:
+        static const bool ALLOWS_DUPLICATES{ false };
         Memory::U_ptr<ArrayContainer<T>> _container{ };
     };
 }
