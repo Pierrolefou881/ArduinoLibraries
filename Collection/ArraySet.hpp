@@ -1,12 +1,12 @@
 /*
  * ----------------------------------------------------------------------------
- * ArrayList
- * Unordered list based on array memory allocation.
+ * ArraySet
+ * Unordered set based on array memory allocation.
  * Part of the ArduinoLibraries project, to be used with any Arduino board.
  * <https://github.com/Pierrolefou881/ArduinoLibraries>
  * ----------------------------------------------------------------------------
  *
- * Copyright (C) 2025  Pierre DEBAS
+ * Copyright (C) 2026  Pierre DEBAS
  * <dpierre394@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "UnorderedList.hpp"
+#include "UnorderedCollection.hpp"
 #include "src/UnorderedArrayContainer.hpp"
 #include <Memory.hpp>
 
@@ -31,18 +31,18 @@ namespace Collection
 {
     /**
      * Simple generic, unordered collection. Duplicate elements
-     * are allowed. Memory allocation is based on arrays.
+     * are not allowed. Memory allocation is based on arrays.
      * @param T can be any type as long as it has a default intializer.
      *          Usually smart pointers.
      */
     template <typename T>
-    class ArrayList : public UnorderedList<T>
+    class ArraySet : public UnorderedCollection<T>
     {
     public:
-        virtual ~ArrayList(void) = default;
+        virtual ~ArraySet(void) = default;
 
         /**
-         * Tries to add the provided item to this ArrayList and
+         * Tries to add the provided item to this ArraySet and
          * at the specified index (at the beginning if no index is provided).
          * @param item to add.
          * @param index where to add the item. Must be within bounds. 0 by default.
@@ -55,7 +55,7 @@ namespace Collection
 
         /**
          * Adds the provided item at the end of this
-         * ArrayList.
+         * ArraySet.
          * @param item to add.
          */
         void append(const T& item) override
@@ -64,7 +64,7 @@ namespace Collection
         }
 
         /**
-         * Removes the first encountered instance of the provided item.
+         * Removes the first (and only) encountered instance of the provided item.
          * @param item to remove.
          */
         void remove(const T& item) override
@@ -83,16 +83,7 @@ namespace Collection
         }
 
         /**
-         * Removes all instances of the provided item from this ArrayList.
-         * @param item to remove completeley.
-         */
-        void remove_all(const T& item) override
-        {
-            _container->remove_all(item);
-        }
-
-        /**
-         * Removes all items from this ArrayList.
+         * Removes all items from this ArraySet.
          */
         void clear(void) override
         {
@@ -112,10 +103,10 @@ namespace Collection
         }
 
         /**
-         * Checks the presence of a given item within this ArrayList.
+         * Checks the presence of a given item within this ArraySet.
          * @param item to check.
          * @param out_index of the first encountered occurrence, if any. Out parameter.
-         * @return true if item is present within this ArrayList,
+         * @return true if item is present within this ArraySet,
          *         false otherwise.
          */
         bool contains(const T& item, uint16_t& out_index) const override
@@ -124,7 +115,7 @@ namespace Collection
         }
 
         /**
-         * @return the number of elements contained in this ArrayList.
+         * @return the number of elements contained in this ArraySet.
          */
         uint16_t size(void) const override
         {
@@ -132,7 +123,7 @@ namespace Collection
         }
 
     private:
-        static const bool ALLOWS_DUPLICATES{ true };
+        static const bool ALLOWS_DUPLICATES{ false };
 
         const Memory::U_ptr<ArrayContainer<T>> _container
         { 

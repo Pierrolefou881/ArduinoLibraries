@@ -200,22 +200,12 @@ void print_collection(Collection::BaseCollection<char>* collection)
   auto linked = static_cast<Collection::LinkedSet<char>*>(collection);
   #elif defined(_QUEUE) || defined(_STACK)
   auto linked = static_cast<Collection::ProcessingCollection<char>*>(collection);
-  #elif defined(_ARRAY_MAP)
-  auto linked = static_cast<Collection::ArrayMap<int, char>*>(collection);
   #endif
   auto iterator = linked->create_iterator();
   while (iterator->has_next())
   {
-    #ifdef _ARRAY_MAP
-    auto item = iterator->get();
-    Serial.print(item.key);
-    Serial.print(", ");
-    Serial.print(item.value);
-    Serial.print('\t');
-    #else
     Serial.print(iterator->get());
     Serial.print('\t');
-    #endif
     iterator->next();
   }
   #endif

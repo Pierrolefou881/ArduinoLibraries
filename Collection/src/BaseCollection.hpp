@@ -85,6 +85,7 @@ namespace Collection
         /**
          * Removes the item at the specified position.
          * Does nothing if index is out of bounds.
+         * @param index of the item to remove.
          */
         virtual void remove_at(uint16_t index) = 0;
 

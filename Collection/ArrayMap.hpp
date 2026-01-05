@@ -1,4 +1,3 @@
-#include <stdint.h>
 /*
  * ----------------------------------------------------------------------------
  * ArrayMap
@@ -31,70 +30,17 @@
 
 namespace Collection
 {
-    // Forward declaration.
-    template<typename TK, typename TV>
-    class ArrayMap;
-
-    /**
-     * Iterates over ArrayMap instances.
-     * @param TK type of key. Must implement equality and comparison operators.
-     *        Most frequently an integer or enumerated type.
-     * @param TV can be any type as long as it has a default initializer.
-     *        Generally, one should provde smart pointers as such type.
-     */
-    template<typename TK, typename TV>
-    class ArrayMapIterator : public BaseIterator<KeyValue<TK, TV>>
-    {
-    public:
-        /**
-         * Initializes this ArrayMapIterator with the given ArrayMap
-         * to iterate over.
-         * @param map must not be nullptr.
-         */
-        ArrayMapIterator(ArrayMap<TK, TV>* map) : _map{ map }, _current_index{ 0 }
-        {
-            // Empty body.
-        }
-
-        /**
-         * @return true if there is at least one element remaining to iterate
-         *         over, false otherwise.
-         */
-        bool has_next(void) const override
-        {
-            return _current_index < _map->size();
-        }
-
-        /**
-         * @return the element currently iterated over.
-         */
-        KeyValue<TK, TV>& get(void) const override
-        {
-            return _map->_keyvals->at(_current_index);
-        }
-
-        /**
-         * Moves to the next element.
-         */
-        void next(void) override
-        {
-            _current_index++;
-        }
-    private:
-        ArrayMap<TK, TV>* _map{ };
-        uint16_t _current_index{ };
-    };
-
     /**
      * Concrete implementation of Map that uses data array for dynamic memory
-     * allocation. Implements also iterable for access to the whole collection.
+     * allocation. Keys are stored within an ordered set, while values are stored
+     * within an unordered set.
      * @param TK type of key. Must implement equality and comparison operators.
      *        Most frequently an integer or enumerated type.
      * @param TV can be any type as long as it has a default initializer.
      *        Generally, one should provde smart pointers as such type.
      */
     template<typename TK, typename TV>
-    class ArrayMap : public Map<TK, TV>, public Iterable<KeyValue<TK, TV>>
+    class ArrayMap : public Map<TK, TV>
     {
     public:
         /**
@@ -112,7 +58,7 @@ namespace Collection
          */
         bool add(const TK& key, const TV& value) override
         {
-            return _keyvals->add({ key, value }, 0);
+            return false;
         }
 
         /**
@@ -122,7 +68,7 @@ namespace Collection
          */
         void remove(const TK& key) override
         {
-            _keyvals->remove({ key, { } });
+            
         }
 
         /**
@@ -133,20 +79,7 @@ namespace Collection
          */
         void remove_all(const TV& item) override
         {
-            Stack<uint16_t> indices{ };
-            for (uint16_t i = 0; i < size(); i++)
-            {
-                if (_keyvals->at(i).value == item)
-                {
-                    indices.push(i);
-                }
-            }
-            auto iterator = indices.create_iterator();
-            while (iterator->has_next())
-            {
-                _keyvals->remove_at(iterator->get());
-                iterator->next();
-            }
+           
         }
 
         /**
@@ -157,12 +90,6 @@ namespace Collection
          */
         bool try_get(const TK& key, TV& out_value) override
         {
-            uint16_t index{ };
-            if (_keyvals->contains({ key, { } }, index))
-            {
-                out_value = _keyvals->at(index).value;
-                return true;
-            }
             return false;
         }
 
@@ -171,7 +98,7 @@ namespace Collection
          */
         uint16_t size(void) const override
         {
-            return _keyvals->size();
+            return 0;
         }
 
         /**
@@ -182,7 +109,7 @@ namespace Collection
         bool contains_key(const TK& key) const override
         {
             uint16_t _{};
-            return _keyvals->contains({ key, { } }, _);
+            return false;
         }
 
         /**
@@ -193,17 +120,19 @@ namespace Collection
          */
         bool contains(const TV& value) const override
         {
-            auto iterator = create_iterator();
-            while (iterator->has_next())
-            {
-                if (iterator->get().value == value)
-                {
-                    return true;
-                }
-                
-                iterator->next();
-            }
             return false;
+        }
+
+        /**
+         * Accesses the KeyValue pair at the specified index.
+         * CAUTION: ensure index is within bounds, for there are no
+         * exceptions on Arduino boards.
+         * @param index must be within bounds.
+         * @return the key and value at the specified index.
+         */
+        KeyValue<TK, TV> at(uint16_t index) const override
+        {
+            return { };
         }
         
         /**
@@ -212,23 +141,10 @@ namespace Collection
          */
         void clear(void) override
         {
-            _keyvals->clear();
         }
 
-        /**
-         * @return a new instance of BaseIterator for this Iterable.
-         */
-        virtual Memory::U_ptr<BaseIterator<KeyValue<TK, TV>>> create_iterator(void) const override
-        {
-            return Memory::make_unique<BaseIterator<KeyValue<TK, TV>>, ArrayMapIterator<TK, TV>>((ArrayMap<TK, TV>*) this);
-        }
-
-        friend class ArrayMapIterator<TK, TV>;
 
     private:
-        const Memory::U_ptr<OrderedSet<KeyValue<TK, TV>>> _keyvals
-        {
-            Memory::make_unique<OrderedSet<KeyValue<TK, TV>>>()
-        };
+        const Memory::U_ptr<Collection::OrderedSet<TK>> _keys{ };
     };
 }

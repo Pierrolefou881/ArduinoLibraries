@@ -37,6 +37,6 @@ namespace Collection
     template<typename T>
     class UnorderedList : public UnorderedCollection<T>, public BaseList<T>
     {
-        // Empty body.
+        virtual ~UnorderedList(void) = default;
     };
 }
