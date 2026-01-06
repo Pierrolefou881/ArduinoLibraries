@@ -24,8 +24,9 @@
  */
 #pragma once
 #include "Map.hpp"
-#include "Iterable.hpp"
 #include <Memory.hpp>
+#include "OrderedSet.hpp"
+#include "ArraySet.hpp"
 #include "Stack.hpp"
 
 namespace Collection
@@ -58,7 +59,13 @@ namespace Collection
          */
         bool add(const TK& key, const TV& value) override
         {
-            return false;
+            if (!_keys->add(key))
+            {
+                return false;
+            }
+
+            uint16_t index{ };
+            return _keys->contains(key, index) && _values->add(value, index);
         }
 
         /**
@@ -68,7 +75,12 @@ namespace Collection
          */
         void remove(const TK& key) override
         {
-            
+            uint16_t index{ };
+            if (_keys->contains(key, index))
+            {
+                _keys->remove_at(index);
+                _values->remove_at(index);
+            }
         }
 
         /**
@@ -79,7 +91,21 @@ namespace Collection
          */
         void remove_all(const TV& item) override
         {
-           
+            Stack<uint16_t> indices{ };
+            for (uint16_t index = 0; index < _values->size(); index++)
+            {
+                if (_values->at(index) == item)
+                {
+                    indices.push(index);
+                }
+            }
+
+            while (!indices.is_empty())
+            {
+                auto index = indices.pop();
+                _keys->remove_at(index);
+                _values->remove_at(index);
+            }
         }
 
         /**
@@ -90,7 +116,13 @@ namespace Collection
          */
         bool try_get(const TK& key, TV& out_value) override
         {
-            return false;
+            uint16_t index{ };
+            auto success = _keys->contains(key, index);
+            if (success)
+            {
+                out_value = _values->at(index);
+            }
+            return success;
         }
 
         /**
@@ -98,7 +130,7 @@ namespace Collection
          */
         uint16_t size(void) const override
         {
-            return 0;
+            return _keys->size();
         }
 
         /**
@@ -109,7 +141,7 @@ namespace Collection
         bool contains_key(const TK& key) const override
         {
             uint16_t _{};
-            return false;
+            return _keys->contains(key, _);
         }
 
         /**
@@ -120,7 +152,8 @@ namespace Collection
          */
         bool contains(const TV& value) const override
         {
-            return false;
+            uint16_t _{ };
+            return _values->contains(value, _);
         }
 
         /**
@@ -132,7 +165,7 @@ namespace Collection
          */
         KeyValue<TK, TV> at(uint16_t index) const override
         {
-            return { };
+            return { _keys->at(index), _values->at(index) };
         }
         
         /**
@@ -141,10 +174,20 @@ namespace Collection
          */
         void clear(void) override
         {
+            _keys->clear();
+            _values->clear();
         }
 
 
     private:
-        const Memory::U_ptr<Collection::OrderedSet<TK>> _keys{ };
+        const Memory::U_ptr<Collection::OrderedCollection<TK>> _keys
+        {
+            Memory::make_unique<Collection::OrderedCollection<TK>, Collection::OrderedSet<TK>>()
+        };
+
+        const Memory::U_ptr<Collection::UnorderedCollection<TV>> _values
+        {
+            Memory::make_unique<Collection::UnorderedCollection<TV>, Collection::ArrayList<TV>>()
+        };
     };
 }

@@ -115,19 +115,20 @@ namespace Collection
 
             auto upper_boundary = ArrayContainer<T>::data_at(max);
             auto lower_boundary = ArrayContainer<T>::data_at(min);
-            if ((_order == SortingOrder::ASCENDING && item >= upper_boundary) 
-                    || (_order == SortingOrder::DESCENDING && item <= upper_boundary))
-            {
-                out_index = max + 1;
-            }
-            else if ((_order == SortingOrder::ASCENDING && item <= lower_boundary) 
+
+            if ((_order == SortingOrder::ASCENDING && item <= lower_boundary)
                     || (_order == SortingOrder::DESCENDING && item >= lower_boundary))
             {
                 out_index = min;
             }
-            else
+            else if ((_order == SortingOrder::ASCENDING && item <= upper_boundary) 
+                    || (_order == SortingOrder::DESCENDING && item >= upper_boundary))
             {
                 out_index = max;
+            }
+            else
+            {
+                out_index = max + 1;
             }
 
             return item == lower_boundary || item == upper_boundary;

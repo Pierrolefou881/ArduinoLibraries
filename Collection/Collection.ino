@@ -33,7 +33,7 @@
 // #define _LIST
 // #define _ARRAY_LIST
 // #define _ORDERED_SET
-#define _LINKED
+// #define _LINKED
 // #define _LINKED_LIST
 // #define _LINKED_SET
 // #define _QUEUE
@@ -60,8 +60,8 @@ void setup() {
   #endif
 
   #ifdef _ORDERED_SET
-  orderedCharSet = new Collection::OrderedSet<char>{ };
-  // orderedCharSet = new Collection::OrderedSet<char>{ Collection::SortingOrder::DESCENDING };
+  // orderedCharSet = new Collection::OrderedSet<char>{ };
+  orderedCharSet = new Collection::OrderedSet<char>{ Collection::SortingOrder::DESCENDING };
   #endif
 
   #ifdef _LINKED_SET
@@ -162,12 +162,13 @@ void loop() {
   if (size < 10)
   {
       charMap->add(size, 'A' + size % 2);
+      charMap->add(size, 'M' + size % 2);
   }
   else
   {
       // charMap->remove(0);
-      charMap->remove_all('B');
-      // charMap->clear();
+      // charMap->remove_all('B');
+      charMap->clear();
   }
   print_collection(charMap);
   #endif
@@ -189,6 +190,16 @@ void print_collection(Collection::BaseCollection<char>* collection)
   for (uint16_t index = 0; index < collection->size(); index++)
   {
     Serial.print(collection->at(index));
+    Serial.print('\t');
+  }
+  #endif
+
+  #ifdef _ARRAY_MAP
+  for (uint16_t index = 0; index < collection->size(); index++)
+  {
+    Serial.print(collection->at(index).key);
+    Serial.print(", ");
+    Serial.print(collection->at(index).value);
     Serial.print('\t');
   }
   #endif
