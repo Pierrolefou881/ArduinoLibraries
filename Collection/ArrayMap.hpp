@@ -163,7 +163,7 @@ namespace Collection
          * @param index must be within bounds.
          * @return the key and value at the specified index.
          */
-        KeyValue<TK, TV> at(uint16_t index) const override
+        KeyValue<TK, TV> at(uint16_t index) const
         {
             return { _keys->at(index), _values->at(index) };
         }
@@ -178,6 +178,7 @@ namespace Collection
             _values->clear();
         }
 
+        KeyValue<TK, TV> operator [](uint16_t index) { return at(index); }
 
     private:
         const Memory::U_ptr<Collection::OrderedCollection<TK>> _keys

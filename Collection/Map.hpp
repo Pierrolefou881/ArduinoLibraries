@@ -157,22 +157,11 @@ namespace Collection
          *         in this Map, false otherwise.
          */
         virtual bool contains(const TV& value) const = 0;
-
-        /**
-         * Accesses the KeyValue pair at the specified index.
-         * CAUTION: ensure index is within bounds, for there are no
-         * exceptions on Arduino boards.
-         * @param index must be within bounds.
-         * @return the key and value at the specified index.
-         */
-        virtual KeyValue<TK, TV> at(uint16_t index) const = 0;
         
         /**
          * Removes all elements from this Map and clears its
          * indexed keys. Restores this Map to an empty state.
          */
         virtual void clear(void) = 0;
-
-        KeyValue<TK, TV> operator [](uint16_t index) { return at(index); }
     };
 }

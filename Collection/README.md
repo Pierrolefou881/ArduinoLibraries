@@ -136,6 +136,52 @@ Removes all elements from the collection.
 #### size()
 - Retunr type: unsigned int, the number of elements in the collection.
 
+### Map
+Defines collections of items indexed by a unique key. Such
+an association is contained in a **KeyValue**, alhtough those 
+objects are not *stricto sensu* required in the algorithms. Maps
+should tolerate duplicates as far as values are concerned.
+
+#### add()
+Adds a specfied item with the specified key. Should fail if key
+already in use.
+- Parameter **key** must be unique
+- Parameter **value** can be anything defined by the template type.
+- Return value: bool, true if insertion successful, false otherwise.
+
+#### remove()
+Removes an item out of the Map. If the item is not found, does nothing.
+- Parameter **key** of the item to remove.
+
+#### remove_all()
+Removes all the instances of the provided value and frees all
+the keys associated with them. Does nothing if the item is not
+present.
+-Parameter **item** value to wipe off the Map.
+
+#### try_get()
+Tries to fetch an item by its key.
+- Parameter **key** of the item to find.
+- Parameter **out_value** the item, if found. Out parameter.
+- Return type: bool, true if item found, false otherwise.
+
+#### Size()
+- Return type: unsigned integer, the number of KeyValues in the Map.
+
+#### contains_key()
+Checks whether a specific key is in use within the Map.
+- Parameter **key** to check the presence of.
+- Return type: bool, true if **key** is used within the Map,
+false otherwise.
+
+#### contains()
+Check if a specific item is present within the Map.
+- Parameter **value** to check the presence of.
+- Return type: bool, true if **value** contained in the Map, false otherwise.
+
+#### clear()
+Removes all elements and frees all keys.
+
 ### Iterable
 Defines iterable collections, i.e. the possibility to create an
 instance of **BaseIterator**
@@ -165,10 +211,41 @@ allow duplicates. It also implements **Iterable** an can
 therefore generate **LinkedSetIterator**s.
 **LinkedSet**s are useful for collections that need only one
 occurrence per item and require strict memory allocation policies.
-As a linked collection, acces through inex is costs more in terms
+As a linked collection, acces through index costs more in terms
 of computation times than array based collections.
+
+### ArraySet
+**UnorderedCollection** implementation that uses data array as
+dynamic memory allocation. As a set, **ArraySet** does not
+allow duplicates.
+**ArraySet** offers good performance if one needs to access data
+via indices and allows only one occurrence per value.
+
+### OrderedSet
+**OrderedCollection** implementation that uses data array as
+dynamic memory allocation. As a set, **OrderedSet** does not
+allow duplicates.
+**OrderedSet** offers excellent access performance since it relies on array indexing and its data is sorted.
+
+### Stack
+**Stack** inherits from **ProcessingCollection** as a last in,
+first out collection. The head is therefore set as the last
+element to be inserted.
 
 ### Queue
 **Queue** inherits from **ProcessingCollection** as a
 first in, first out collection. The head is therefore set
 as the first element to be inserted.
+
+### ArrayMap
+**Map** implementation using double data arrays for dynamic
+memory allocation. Since **ArrayMap** uses arrays, it also
+offers access via index to its elements.
+
+#### at()
+Accesses the KeyValue at the specified index. CAUTION: Ensure index is always within bounds, i.e. strictly inferior to size().
+- Parameter **index** must be within bounds.
+- Return type: KeyValue<TK, TV>, the pair at the given index.
+
+#### operator[]
+See **at()**.

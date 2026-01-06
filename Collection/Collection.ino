@@ -195,11 +195,12 @@ void print_collection(Collection::BaseCollection<char>* collection)
   #endif
 
   #ifdef _ARRAY_MAP
-  for (uint16_t index = 0; index < collection->size(); index++)
+  auto cast_collection = static_cast<Collection::ArrayMap<int, char>*>(collection);
+  for (uint16_t index = 0; index < cast_collection->size(); index++)
   {
-    Serial.print(collection->at(index).key);
+    Serial.print(cast_collection->at(index).key);
     Serial.print(", ");
-    Serial.print(collection->at(index).value);
+    Serial.print(cast_collection->at(index).value);
     Serial.print('\t');
   }
   #endif
